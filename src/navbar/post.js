@@ -15,29 +15,10 @@ export default function Post({ onSearch }) {
 
   const handleClick = () => {
     if (inputValue.trim()) {
-      navigate(`https://server-t48e.onrender.com/searchresult?query=${encodeURIComponent(inputValue)}`);
+      navigate(`/searchresult?query=${encodeURIComponent(inputValue)}`);
     }
   };
 
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await fetch("https://server-t48e.onrender.com/api/session", {
-          method: "GET",
-          credentials: "include",
-        });
-        const data = await response.json();
-        if (response.ok) {
-          navigate(data.user.role === "admin" ? "/post" : "/userhome");
-        }
-      } catch (error) {
-        console.error("Session check failed:", error);
-      }
-    };
-    checkSession();
-  }, [navigate]);
-  
   return (
     <div className="flex min-h-screen">
       <Sidebar />
@@ -63,7 +44,6 @@ export default function Post({ onSearch }) {
                   </button>
                 </div>
           </div>
-
 
           <div className="flex gap-4 items-center mb-5">
             <button onClick={() => { setShowPostSection(true); }} className={`px-4 py-2 font-bold rounded-lg ${showPostSection ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>Post</button>
