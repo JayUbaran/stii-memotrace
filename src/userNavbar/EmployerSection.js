@@ -45,7 +45,7 @@ export default function EmployerSection({ onClose }) {
   setEmployerLink(null);
 
   try {
-    const res = await fetch("https://server-1-gjvd.onrender.com/api/sendemployerinvite", {
+    const res = await fetch("https://server-t48e.onrender.com/api/sendemployerinvite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
