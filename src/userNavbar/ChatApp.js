@@ -25,7 +25,7 @@ const ChatApp = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  const { id } = useParams();
+
   const currentUser = user;
 
   // Fetch current user
@@ -166,7 +166,7 @@ const ChatApp = () => {
 
   // Select user + mark seen
   const handleSelectUser = async (user) => {
-    const partnerId = user.partner_id || user.id;
+    const partnerId = user.partner_id;
     setSelectedUser({
       partner_id: partnerId,
       first_name: user.first_name,

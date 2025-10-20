@@ -15,11 +15,8 @@ import Gallery from "./Gallery";
 
 export default function Post({ onSearch }) {
   const [posts, setPosts] = useState([]);
-  const [newPost, setNewPost] = useState("");
   const [user, setUser] = useState(null);
-  const [editingPost, setEditingPost] = useState(null);
-  const [editedContent, setEditedContent] = useState("");
-  const [menuOpen, setMenuOpen] = useState(null); // Track which menu is open
+ 
   const [showPostSection, setShowPostSection] = useState(true);
   const [inputValue, setInputValue] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -65,135 +62,6 @@ export default function Post({ onSearch }) {
     }
   };
 
-  const createPost = async () => {
-    if (!newPost.trim() || !user) return;
-  
-    try {
-      const response = await fetch("https://server-t48e.onrender.com/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: newPost }),
-        credentials: "include",
-      });
-  
-      if (response.ok) {
-        const newPostData = await response.json();
-        setPosts([newPostData, ...posts]);
-        setNewPost("");
-
-
-        Swal.fire({
-          icon: "success",
-          title: "Post Created!",
-          text: "Your post has been successfully added.",
-          timer: 2000,
-          showConfirmButton: false,
-        }).then(() => {
-          window.location.reload();
-        });
-      }
-    } catch (error) {
-      console.error("Error creating post:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops!",
-        text: "Something went wrong. Please try again.",
-      });
-    }
-  };
-  
-  
-
-  const deletePost = async (postId) => {
-    const confirmDelete = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    });
-  
-    if (!confirmDelete.isConfirmed) return;
-  
-    try {
-      const response = await fetch(`https://server-t48e.onrender.com/api/posts/${postId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-  
-      if (response.ok) {
-        setPosts(posts.filter((post) => post.id !== postId));
-  
-        Swal.fire({
-          icon: "success",
-          title: "Deleted!",
-          text: "Your post has been removed.",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting post:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops!",
-        text: "Unable to delete the post.",
-      });
-    }
-  };
-  
-
-  const editPost = async (postId) => {
-    try {
-      const response = await fetch(`https://server-t48e.onrender.com/api/posts/${postId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: editedContent }),
-        credentials: "include",
-      });
-  
-      if (response.ok) {
-        setPosts(posts.map((post) => (post.id === postId ? { ...post, content: editedContent } : post)));
-        setEditingPost(null);
-        setMenuOpen(null); // Close menu after edit
-  
-        Swal.fire({
-          icon: "success",
-          title: "Post Updated!",
-          text: "Your post has been successfully updated.",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      }
-    } catch (error) {
-      console.error("Error updating post:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops!",
-        text: "Something went wrong while updating the post.",
-      });
-    }
-  };
-  
-
-  const makeLinksClickable = (text) => {
-    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+|\S+@\S+\.\S+)/g;
-    return text.split(urlRegex).map((part, index) => {
-      if (part && part.match(urlRegex)) {
-        // If the part matches the URL pattern, make it clickable
-        const href = part.startsWith("www.") ? `http://${part}` : part;
-        return (
-          <a key={index} href={href} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-            {part}
-          </a>
-        );
-      }
-      return part;
-    });
-  };
-  
 
   return (
     <div className="relative h-screen overflow-hidden">
