@@ -24,32 +24,22 @@ function NavItem({ Icon, label, onClick, imageUrl }) {
 
 const YearbookViewer = ({ yearbook, onClose }) => {
   const [images, setImages] = useState([]);
-  const [bookSize, setBookSize] = useState({ width: 600, height: 800 });
+  const [bookSize, setBookSize] = useState({ width: 500, height: 700 });
   const [singlePage, setSinglePage] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!yearbook?.related_id) return;
+    const yearbookId = yearbook.related_id;
+    if (!yearbookId) return;
 
-    const fetchImages = async () => {
-      try {
-        const res = await fetch(`https://server-1-gjvd.onrender.com/yearbook/${yearbook.related_id}/images`);
-        const data = await res.json();
-        setImages(data || []);
-      } catch (err) {
-        console.error("❌ Error fetching yearbook images:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchImages();
+    fetch(`https://server-1-gjvd.onrender.com/yearbook/${yearbookId}/images`)
+      .then((res) => res.json())
+      .then((data) => setImages(data))
+      .catch((err) => console.error("Error fetching images:", err));
 
     const handleResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-
-      if (width < 400) {
+      if (width < 200 || height < 300) {
         setBookSize({ width: 240, height: 340 });
         setSinglePage(true);
       } else if (width < 768 || height < 700) {
@@ -67,65 +57,54 @@ const YearbookViewer = ({ yearbook, onClose }) => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [yearbook?.related_id]);
+  }, [yearbook.related_id]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center p-4 sm:p-6 overflow-y-auto">
-      <div className="relative w-full max-w-6xl flex flex-col justify-center items-center">
-        {/* Close Button */}
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center sm:p-6 mt-20">
+      <div className="sm:p-6 rounded-lg relative w-full max-w-6xl h-full flex flex-col justify-center items-center">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition"
+          className="absolute top-2 right-2 bg-red-500 text-white px-4 py-2 rounded shadow-lg hover:bg-red-600 transition"
         >
-          ✕ Close
+          Close
         </button>
 
-        {/* Loading State */}
-        {loading ? (
-          <p className="text-white text-lg mt-10">Loading yearbook...</p>
-        ) : images.length > 0 ? (
-          <div className="flex justify-center items-center w-full mt-8 sm:mt-0">
+        {images.length > 0 ? (
+          <div className="flex justify-center items-center w-full pb-0 h-full">
             <HTMLFlipBook
               width={bookSize.width}
               height={bookSize.height}
-              minWidth={240}
-              maxWidth={1000}
-              minHeight={300}
+              minWidth={400}
+              maxWidth={1200}
+              minHeight={340}
               maxHeight={900}
               showCover={true}
               drawShadow={true}
               flippingTime={800}
               useMouseEvents={true}
+              className="shadow-lg rounded-lg"
+              startPage={0}
               autoSize={true}
               clickEventForward={true}
               usePortrait={true}
               singlePage={singlePage}
-              className="shadow-2xl rounded-lg bg-white"
             >
-              {images.map((img, index) => {
-                const imgSrc =
-                  img.file_path?.startsWith("http") || img.file_path?.startsWith("data:")
-                    ? img.file_path
-                    : `https://server-1-gjvd.onrender.com/${img.file_path}`;
-
-                return (
-                  <div
-                    key={index}
-                    className="w-full h-full flex justify-center items-center bg-white"
-                  >
-                    <img
-                      src={imgSrc}
-                      alt={`Page ${index + 1}`}
-                      className="max-w-full max-h-full object-contain rounded-lg"
-                      onError={(e) => (e.currentTarget.style.display = "none")}
-                    />
-                  </div>
-                );
-              })}
+              {images.map((img, index) => (
+                <div
+                  key={index}
+                  className="w-auto h-auto flex justify-center items-center"
+                >
+                  <img
+                    src={`/${img.file_path}`}
+                    alt={`Page ${index + 1}`}
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                  />
+                </div>
+              ))}
             </HTMLFlipBook>
           </div>
         ) : (
-          <p className="text-gray-300 text-lg mt-10">No images found in this yearbook.</p>
+          <p className="text-center text-gray-500">No images found.</p>
         )}
       </div>
     </div>

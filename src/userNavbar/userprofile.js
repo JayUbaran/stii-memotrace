@@ -433,22 +433,26 @@ useEffect(() => {
 )}
 {/* Main Content */}
 <main className="flex-1 p-4 mt-4 relative">
-  <div className="bg-white p-4 rounded-lg shadow mb-16 h-full">
-    <h2 className="text-xl font-bold mb-4">Your Post</h2>
+  <div className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow mb-16 h-full">
+    <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">Your Posts</h2>
 
     <div className="space-y-6">
       {(() => {
         const userPosts = posts.filter((post) => post.user_id === user?.id);
+
         if (userPosts.length === 0) {
           return (
-            <p className="text-center text-gray-500 text-lg">
-              You have not posted yet
+            <p className="text-center text-gray-500 text-lg dark:text-gray-400">
+              You haven’t posted anything yet.
             </p>
           );
         }
 
         return userPosts.map((post) => (
-          <div key={post.id} className="bg-white p-6 rounded-lg shadow-md relative">
+          <div
+            key={post.id}
+            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md relative border border-gray-200 dark:border-gray-700"
+          >
             {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -456,7 +460,7 @@ useEffect(() => {
                   <img
                     src={user.profile}
                     alt="Profile"
-                    className="w-10 h-10 rounded-full object-cover border-4 border-gray-200 cursor-pointer"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 cursor-pointer"
                   />
                 ) : (
                   <div className="w-10 h-10 bg-blue-500 rounded-full flex justify-center items-center text-white font-bold">
@@ -465,10 +469,10 @@ useEffect(() => {
                 )}
 
                 <div className="ml-3">
-                  <h2 className="font-semibold text-lg text-gray-800">
-                    {post.username || "Unknown User"} {post.lastname}
+                  <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-200">
+                    {post.username || "Unknown User"} {post.lastname || ""}
                   </h2>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {new Date(post.date_posted).toLocaleString()}
                   </p>
                 </div>
@@ -481,24 +485,29 @@ useEffect(() => {
                     onClick={() =>
                       setMenuOpen(menuOpen === post.id ? null : post.id)
                     }
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
                   >
-                    <BsThreeDotsVertical className="text-gray-600 hover:text-gray-800 cursor-pointer" />
+                    <BsThreeDotsVertical className="text-gray-600 dark:text-gray-300 cursor-pointer" />
                   </button>
 
                   {menuOpen === post.id && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
+                    <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg z-10">
                       <button
                         onClick={() => {
                           setEditingPost(post.id);
                           setEditedContent(post.content);
+                          setMenuOpen(null);
                         }}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => deletePost(post.id)}
-                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                        onClick={() => {
+                          deletePost(post.id);
+                          setMenuOpen(null);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         Delete
                       </button>
@@ -510,53 +519,57 @@ useEffect(() => {
 
             {/* Post Content */}
             {editingPost === post.id ? (
-              <div>
+              <div className="mt-3">
                 <textarea
-                  className="w-full p-2 border rounded-lg mt-2"
+                  className="w-full p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200"
                   value={editedContent}
                   onChange={(e) => setEditedContent(e.target.value)}
+                  rows="3"
                 />
-                <div className="mt-2 flex gap-2">
+                <div className="mt-3 flex gap-2">
                   <button
                     onClick={() => editPost(post.id, editedContent)}
-                    className="px-4 py-2 bg-green-500 text-white font-bold rounded-lg"
+                    className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg"
                   >
                     Save
                   </button>
                   <button
                     onClick={() => setEditingPost(null)}
-                    className="px-4 py-2 bg-gray-500 text-white font-bold rounded-lg"
+                    className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg"
                   >
                     Cancel
                   </button>
                 </div>
               </div>
             ) : (
-              <p className="text-gray-700 whitespace-pre-wrap break-words mt-2">
+              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words mt-3">
                 {makeLinksClickable(post.content)}
               </p>
             )}
 
             {/* Images Grid */}
             {post.images && post.images.length > 0 && (
-                <div
-                  className={`mt-4 grid ${
-                    post.images.length === 1
-                      ? "grid-cols-1"
-                      : "grid-cols-2 md:grid-cols-3"
-                  } gap-2`}
-                >
-                  {post.images.map((img, idx) => (
+              <div
+                className={`mt-4 grid ${
+                  post.images.length === 1
+                    ? "grid-cols-1"
+                    : "grid-cols-2 md:grid-cols-3"
+                } gap-2`}
+              >
+                {post.images
+                  .filter((img) => img && img !== "")
+                  .map((img, idx) => (
                     <img
                       key={idx}
-                      src={img}
-                      alt={`Post ${idx}`}
+                      src={img.startsWith("http") ? img : `data:image/jpeg;base64,${img}`}
+                      alt={`Post Image ${idx + 1}`}
                       className="w-full h-60 object-cover rounded-lg cursor-pointer hover:opacity-90 transition"
                       onClick={() => setCurrentPreviewImages(post.images, idx)}
+                      onError={(e) => (e.currentTarget.style.display = "none")}
                     />
                   ))}
-                </div>
-              )}
+              </div>
+            )}
           </div>
         ));
       })()}
@@ -578,7 +591,7 @@ useEffect(() => {
               exit={{ scale: 0.8 }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Previous */}
+              {/* Previous Button */}
               {currentPreviewImages.length > 1 && (
                 <button
                   className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black transition"
@@ -601,7 +614,7 @@ useEffect(() => {
                 className="w-full h-auto max-h-[80vh] rounded-xl object-contain"
               />
 
-              {/* Next */}
+              {/* Next Button */}
               {currentPreviewImages.length > 1 && (
                 <button
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black transition"
@@ -617,7 +630,7 @@ useEffect(() => {
                 </button>
               )}
 
-              {/* Close */}
+              {/* Close Button */}
               <button
                 className="absolute top-4 right-4 bg-black/60 text-white p-2 rounded-full hover:bg-black transition"
                 onClick={() => setCurrentPreviewImages([])}
@@ -631,6 +644,7 @@ useEffect(() => {
     </div>
   </div>
 </main>
+
 </div>
 
      {/* Feedback Modal */}
