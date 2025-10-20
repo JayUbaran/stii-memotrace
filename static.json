@@ -1,0 +1,11 @@
+{
+  "root": "build",
+  "clean_urls": true,
+  "routes": [
+    {
+      "handle": "rewrite",
+      "src": "/.*",
+      "dest": "/index.html"
+    }
+  ]
+}

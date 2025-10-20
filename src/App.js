@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route  } from "react-router-dom";
+import {  HashRouter as Router, Routes, Route  } from "react-router-dom";
 import Front from './front';
 import Register from "./register";
 import Login from "./login";
