@@ -61,7 +61,12 @@ const ChatApp = () => {
           ...conv,
           unseen_count: conv.unseen_count || 0,
         }));
-        setConversations(updated);
+        setConversations((prev) =>
+          prev.map((c) =>
+            c.partner_id === partnerId ? { ...c, unseen_count: 0 } : c
+          )
+        );
+
       })
       .catch(console.error);
   };
@@ -167,26 +172,31 @@ const ChatApp = () => {
   };
 
   // Select user + mark seen
-  const handleSelectUser = async (user) => {
-    const partnerId = user.partner_id || user.id;
-    setSelectedUser({
-      partner_id: partnerId,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      profile: user.profile || null,
-    });
-    setActiveMenu(null);
+const handleSelectUser = async (user) => {
+  const partnerId = user.partner_id || user.id;
+  setSelectedUser({
+    partner_id: partnerId,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    profile: user.profile || null,
+  });
+  setActiveMenu(null);
 
-    // Mark all messages from partner as seen
-    try {
-      await fetch(`https://server-t48e.onrender.com/api/messages/${currentUser.id}/${partnerId}/seen`, {
-        method: "PATCH",
-      });
+  try {
+    const res = await fetch(
+      `https://server-t48e.onrender.com/api/messages/${currentUser.id}/${partnerId}/seen`,
+      { method: "PATCH" }
+    );
+    const data = await res.json();
+    if (data.success) {
+      // Only reload after seen is confirmed
       loadConversations();
-    } catch (err) {
-      console.error("Mark seen failed:", err);
     }
-  };
+  } catch (err) {
+    console.error("Mark seen failed:", err);
+  }
+};
+
 
   const isSearch = searchTerm.trim() !== "";
 

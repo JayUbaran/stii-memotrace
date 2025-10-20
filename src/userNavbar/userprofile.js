@@ -27,6 +27,7 @@ const [showSidebar, setShowSidebar] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
 const [passwordData, setPasswordData] = useState({
   currentPassword: "",
@@ -102,13 +103,16 @@ useEffect(() => {
 };
 
   const handleLogout = async () => {
+     setLoggingOut(true);
     try {
       await fetch("https://server-t48e.onrender.com/api/logout", { method: "POST", credentials: "include" });
       localStorage.removeItem("user");
       navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
-    }
+    }finally {
+    setLoggingOut(false); // Stop loading
+  }
   };
 
   const handlePasswordChange = async () => {
@@ -390,12 +394,44 @@ useEffect(() => {
       >
         Send feedback form to employer
       </button>
-    <button
-      onClick={handleLogout}
-      className="bg-red-500 text-white px-4 py-2 mt-5 rounded-lg flex items-center w-full sm:w-auto"
-    >
+<button
+  onClick={handleLogout}
+  disabled={loggingOut}
+  className={`bg-red-500 text-white px-4 py-2 mt-5 rounded-lg flex items-center w-full sm:w-auto ${
+    loggingOut ? "opacity-60 cursor-not-allowed" : ""
+  }`}
+>
+  {loggingOut ? (
+    <span className="flex items-center gap-2">
+      Logging out...
+      <svg
+        className="animate-spin h-5 w-5 text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v8H4z"
+        ></path>
+      </svg>
+    </span>
+  ) : (
+    <>
       <FaSignOutAlt className="mr-2" /> Logout
-    </button>
+    </>
+  )}
+</button>
+
   </aside>
 </div>
 
