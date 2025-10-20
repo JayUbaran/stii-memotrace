@@ -31,7 +31,7 @@ const YearbookViewer = ({ yearbook, onClose }) => {
     const yearbookId = yearbook.related_id;
     if (!yearbookId) return;
 
-    fetch(`https://server-1-gjvd.onrender.com/yearbook/${yearbookId}/images`)
+    fetch(`https://server-t48e.onrender.com/yearbook/${yearbookId}/images`)
       .then((res) => res.json())
       .then((data) => setImages(data))
       .catch((err) => console.error("Error fetching images:", err));
@@ -95,7 +95,7 @@ const YearbookViewer = ({ yearbook, onClose }) => {
                   className="w-auto h-auto flex justify-center items-center"
                 >
                   <img
-                    src={`/${img.file_path}`}
+                    src={img.file_path.startsWith("http") ? img.file_path : `https://server-t48e.onrender.com/${img.file_path}`}
                     alt={`Page ${index + 1}`}
                     className="max-w-full max-h-full object-contain rounded-lg"
                   />
@@ -132,18 +132,15 @@ const [currentIndex, setCurrentIndex] = useState(0);
 const getValidImages = (images) =>
   images
     .filter((img) => img && img.trim() !== "")
-    .map((img) =>
-      img.startsWith("http") || img.startsWith("data:")
-        ? img
-        : `data:image/jpeg;base64,${img}`
-    );
+    .map((img) => img.startsWith("http") ? img : `https://server-t48e.onrender.com/${img}`);
+
 
   const handleNotificationClick = async (notif) => {
     setSelectedNotification(notif);
 
     if (notif.type === "event" || notif.type === "post") {
       try {
-        const res = await fetch(`https://server-1-gjvd.onrender.com/api/${notif.type}s/${notif.related_id}`);
+        const res = await fetch(`https://server-t48e.onrender.com/api/${notif.type}s/${notif.related_id}`);
         const data = await res.json();
         setRelatedContent(data);
       } catch (err) {
@@ -156,7 +153,7 @@ const getValidImages = (images) =>
   };
 
   useEffect(() => {
-    fetch("https://server-1-gjvd.onrender.com/api/notifications")
+    fetch("https://server-t48e.onrender.com/api/notifications")
       .then((res) => res.json())
       .then((data) => {
         const parsedData = data.map((notif) => ({
@@ -185,7 +182,7 @@ const getValidImages = (images) =>
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("https://server-1-gjvd.onrender.com/api/user", {
+        const response = await fetch("https://server-t48e.onrender.com/api/user", {
           credentials: "include",
         });
         if (!response.ok) throw new Error("Failed to fetch user data");
@@ -332,7 +329,7 @@ const getValidImages = (images) =>
               const src =
                 img.startsWith("http") // Cloudinary or any URL
                   ? img
-                  : img.startsWith("data:"); // Base64 encoded
+                  : `https://server-t48e.onrender.com/${img}`; // Base64 encoded
 
 
               return (
@@ -342,9 +339,7 @@ const getValidImages = (images) =>
                   alt={`Post Image ${idx + 1}`}
                   className="w-full h-48 object-cover rounded-lg border border-gray-300 cursor-pointer hover:opacity-90 transition"
                   onClick={() => {
-                    const validImages = getValidImages(selectedNotification.post_images || selectedNotification.event_images || []);
-                    if (validImages.length === 0) return;
-                    setPreviewImages(validImages);
+                    setPreviewImages(getValidImages(selectedNotification.post_images || selectedNotification.event_images || []));
                     setCurrentIndex(0);
                     setShowPreview(true);
                   }}
@@ -364,8 +359,6 @@ const getValidImages = (images) =>
     )}
   </>
 )}
-
-{/* // Combine preview modal logic */}
 {(showPreview || showImageModal) && previewImages.length > 0 && (
   <div className="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center z-50">
     <button
@@ -435,6 +428,7 @@ const getValidImages = (images) =>
                               src={img}
                               alt={`Event Image ${idx + 1}`}
                               onClick={() => {
+                                setPreviewImages(getValidImages(selectedNotification.post_images || selectedNotification.event_images || []));
                                 setModalImageSrc(img);
                                 setShowImageModal(true);
                               }}
