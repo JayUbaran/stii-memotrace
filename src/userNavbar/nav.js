@@ -24,22 +24,32 @@ function NavItem({ Icon, label, onClick, imageUrl }) {
 
 const YearbookViewer = ({ yearbook, onClose }) => {
   const [images, setImages] = useState([]);
-  const [bookSize, setBookSize] = useState({ width: 500, height: 700 });
+  const [bookSize, setBookSize] = useState({ width: 600, height: 800 });
   const [singlePage, setSinglePage] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const yearbookId = yearbook.related_id;
-    if (!yearbookId) return;
+    if (!yearbook?.related_id) return;
 
-    fetch(`https://server-t48e.onrender.com/yearbook/${yearbookId}/images`)
-      .then((res) => res.json())
-      .then((data) => setImages(data))
-      .catch((err) => console.error("Error fetching images:", err));
+    const fetchImages = async () => {
+      try {
+        const res = await fetch(`https://server-1-gjvd.onrender.com/yearbook/${yearbook.related_id}/images`);
+        const data = await res.json();
+        setImages(data || []);
+      } catch (err) {
+        console.error("❌ Error fetching yearbook images:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
 
     const handleResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      if (width < 200 || height < 300) {
+
+      if (width < 400) {
         setBookSize({ width: 240, height: 340 });
         setSinglePage(true);
       } else if (width < 768 || height < 700) {
@@ -57,54 +67,65 @@ const YearbookViewer = ({ yearbook, onClose }) => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [yearbook.related_id]);
+  }, [yearbook?.related_id]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center sm:p-6 mt-20">
-      <div className="sm:p-6 rounded-lg relative w-full max-w-6xl h-full flex flex-col justify-center items-center">
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center p-4 sm:p-6 overflow-y-auto">
+      <div className="relative w-full max-w-6xl flex flex-col justify-center items-center">
+        {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 bg-red-500 text-white px-4 py-2 rounded shadow-lg hover:bg-red-600 transition"
+          className="absolute top-3 right-3 bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition"
         >
-          Close
+          ✕ Close
         </button>
 
-        {images.length > 0 ? (
-          <div className="flex justify-center items-center w-full pb-0 h-full">
+        {/* Loading State */}
+        {loading ? (
+          <p className="text-white text-lg mt-10">Loading yearbook...</p>
+        ) : images.length > 0 ? (
+          <div className="flex justify-center items-center w-full mt-8 sm:mt-0">
             <HTMLFlipBook
               width={bookSize.width}
               height={bookSize.height}
-              minWidth={400}
-              maxWidth={1200}
-              minHeight={340}
+              minWidth={240}
+              maxWidth={1000}
+              minHeight={300}
               maxHeight={900}
               showCover={true}
               drawShadow={true}
               flippingTime={800}
               useMouseEvents={true}
-              className="shadow-lg rounded-lg"
-              startPage={0}
               autoSize={true}
               clickEventForward={true}
               usePortrait={true}
               singlePage={singlePage}
+              className="shadow-2xl rounded-lg bg-white"
             >
-              {images.map((img, index) => (
-                <div
-                  key={index}
-                  className="w-auto h-auto flex justify-center items-center"
-                >
-                  <img
-                    src={`/${img.file_path}`}
-                    alt={`Page ${index + 1}`}
-                    className="max-w-full max-h-full object-contain rounded-lg"
-                  />
-                </div>
-              ))}
+              {images.map((img, index) => {
+                const imgSrc =
+                  img.file_path?.startsWith("http") || img.file_path?.startsWith("data:")
+                    ? img.file_path
+                    : `https://server-1-gjvd.onrender.com/${img.file_path}`;
+
+                return (
+                  <div
+                    key={index}
+                    className="w-full h-full flex justify-center items-center bg-white"
+                  >
+                    <img
+                      src={imgSrc}
+                      alt={`Page ${index + 1}`}
+                      className="max-w-full max-h-full object-contain rounded-lg"
+                      onError={(e) => (e.currentTarget.style.display = "none")}
+                    />
+                  </div>
+                );
+              })}
             </HTMLFlipBook>
           </div>
         ) : (
-          <p className="text-center text-gray-500">No images found.</p>
+          <p className="text-gray-300 text-lg mt-10">No images found in this yearbook.</p>
         )}
       </div>
     </div>
@@ -143,7 +164,7 @@ const getValidImages = (images) =>
 
     if (notif.type === "event" || notif.type === "post") {
       try {
-        const res = await fetch(`https://server-t48e.onrender.com/api/${notif.type}s/${notif.related_id}`);
+        const res = await fetch(`https://server-1-gjvd.onrender.com/api/${notif.type}s/${notif.related_id}`);
         const data = await res.json();
         setRelatedContent(data);
       } catch (err) {
@@ -156,7 +177,7 @@ const getValidImages = (images) =>
   };
 
   useEffect(() => {
-    fetch("https://server-t48e.onrender.com/api/notifications")
+    fetch("https://server-1-gjvd.onrender.com/api/notifications")
       .then((res) => res.json())
       .then((data) => {
         const parsedData = data.map((notif) => ({
@@ -185,7 +206,7 @@ const getValidImages = (images) =>
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("https://server-t48e.onrender.com/api/user", {
+        const response = await fetch("https://server-1-gjvd.onrender.com/api/user", {
           credentials: "include",
         });
         if (!response.ok) throw new Error("Failed to fetch user data");
@@ -322,36 +343,42 @@ const getValidImages = (images) =>
   <>
     {selectedNotification.post_content ? (
       <>
-        <p className="text-gray-700 dark:text-gray-300">{selectedNotification.post_content}</p>
+        <p className="text-gray-700 dark:text-gray-300 mb-2">
+          {selectedNotification.post_content}
+        </p>
 
-        {/* Images */}
+        {/* 🖼️ Images */}
         {selectedNotification.post_images &&
           selectedNotification.post_images
-            .filter((img) => img && img !== "") // ✅ remove empty or null images
+            .filter((img) => img && img.trim() !== "")
             .map((img, idx) => {
-              // Determine correct src
+              // 🌐 Support for Cloudinary + base64 + local fallbacks
               const src =
-                img.startsWith("http") || img.startsWith("data:")
+                img.startsWith("http") // Cloudinary or any URL
                   ? img
-                  : `data:image/jpeg;base64,${img}`;
+                  : img.startsWith("data:") // Base64 encoded
+                  ? img
+                  : `/postuploads/${img}`; // Local fallback (legacy)
 
               return (
                 <img
                   key={idx}
                   src={src}
                   alt={`Post Image ${idx + 1}`}
-                  className="w-full h-48 object-cover rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition"
-                onClick={() => {
-                    const validImages = getValidImages(selectedNotification.post_images);
-                    if (validImages.length === 0) return; // nothing to preview
-
+                  className="w-full h-48 object-cover rounded-lg border border-gray-300 cursor-pointer hover:opacity-90 transition"
+                  onClick={() => {
+                    const validImages = getValidImages(
+                      selectedNotification.post_images
+                    );
+                    if (validImages.length === 0) return;
                     setPreviewImages(validImages);
                     setCurrentIndex(idx);
                     setShowPreview(true);
                   }}
-
-
-                  onError={(e) => (e.currentTarget.style.display = "none")} // ✅ hide broken images
+                  onError={(e) => {
+                    // ✅ hide broken images safely
+                    e.currentTarget.style.display = "none";
+                  }}
                 />
               );
             })}
@@ -428,38 +455,68 @@ const getValidImages = (images) =>
   </div>
 )}
 
-                {/* Event Content */}
-                {selectedNotification.type === "event" && (
-                  <>
-                    {selectedNotification.event_content ? (
-                      <>
-                        <p className="text-gray-700 dark:text-gray-300">{selectedNotification.event_content}</p>
-                        {selectedNotification.event_location && (
-                          <p className="text-sm text-blue-500 mt-1">
-                            📍 {selectedNotification.event_location}
-                          </p>
-                        )}
-                        {selectedNotification.event_images &&
-                          selectedNotification.event_images.map((img, idx) => (
-                            <img
-                              key={idx}
-                              src={img}
-                              alt={`Event Image ${idx + 1}`}
-                              onClick={() => {
-                                setModalImageSrc(img);
-                                setShowImageModal(true);
-                              }}
-                              className="mt-3 w-full max-h-[70vh] object-contain rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition"
-                            />
-                          ))}
-                      </>
-                    ) : (
-                      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                        <span>🔒</span> This content isn't available right now.
-                      </div>
-                    )}
-                  </>
-                )}
+{/* 🎉 Event Content */}
+{selectedNotification.type === "event" && (
+  <>
+    {selectedNotification.event_content ? (
+      <>
+        {/* 📝 Event Text */}
+        <p className="text-gray-700 dark:text-gray-300 mb-2">
+          {selectedNotification.event_content}
+        </p>
+
+        {/* 📍 Event Location */}
+        {selectedNotification.event_location && (
+          <p className="text-sm text-blue-500 mt-1 flex items-center gap-1">
+            📍 <span>{selectedNotification.event_location}</span>
+          </p>
+        )}
+
+        {/* 🖼️ Event Images */}
+        {selectedNotification.event_images &&
+          selectedNotification.event_images
+            .filter((img) => img && img.trim() !== "")
+            .map((img, idx) => {
+              // 🌐 Determine the correct source
+              const src =
+                img.startsWith("http") // Cloudinary or external link
+                  ? img
+                  : img.startsWith("data:") // Base64
+                  ? img
+                  : `/eventuploads/${img}`; // Local fallback (legacy)
+
+              return (
+                <img
+                  key={idx}
+                  src={src}
+                  alt={`Event Image ${idx + 1}`}
+                  className="mt-3 w-full max-h-[70vh] object-contain rounded-lg border border-gray-300 cursor-pointer hover:opacity-90 transition"
+                  onClick={() => {
+                    const validImages = (selectedNotification.event_images || []).filter(
+                      (i) => i && i.trim() !== ""
+                    );
+                    if (validImages.length === 0) return;
+
+                    setModalImageSrc(src);
+                    setPreviewImages(validImages);
+                    setCurrentIndex(idx);
+                    setShowImageModal(true);
+                  }}
+                  onError={(e) => {
+                    // ✅ Hide broken image elements
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              );
+            })}
+      </>
+    ) : (
+      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+        <span>🔒</span> This content isn't available right now.
+      </div>
+    )}
+  </>
+)}
 
                 {/* Yearbook full view */}
                 {selectedNotification.type === "yearbook" && selectedNotification.yearbook_image && (
