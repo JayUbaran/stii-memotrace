@@ -28,13 +28,15 @@ const ChatApp = () => {
   const { id } = useParams();
   const currentUser = user;
 
-  // Fetch current user
-  useEffect(() => {
-    fetch("https://server-t48e.onrender.com/api/session")
-      .then((res) => res.json())
-      .then((data) => setUser(data.user))
-      .catch(console.error);
-  }, []);
+ useEffect(() => {
+  fetch("https://server-t48e.onrender.com/api/session", {
+    credentials: "include", // 🔥 this is the key
+  })
+    .then((res) => res.json())
+    .then((data) => setUser(data.user))
+    .catch(console.error);
+}, []);
+
 
   // Fetch all alumni
   useEffect(() => {
