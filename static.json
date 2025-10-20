@@ -1,11 +1,11 @@
 {
-  "root": "build",
-  "clean_urls": true,
-  "routes": [
+  "buildCommand": "npm run build",
+  "publishDir": "build",
+  "devCommand": "npm start",
+  "rewrites": [
     {
-      "handle": "rewrite",
-      "src": "/.*",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
