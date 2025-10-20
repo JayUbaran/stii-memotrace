@@ -14,7 +14,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://server-1-gjvd.onrender.com/yearbooks/count')
+    fetch('https://server-t48e.onrender.com/yearbooks/count')
       .then(response => response.json())
       .then(data => setYearbookCount(data.count))
       .catch(error => console.error('Error fetching yearbook count:', error));
@@ -23,7 +23,7 @@ const Dashboard = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch("https://server-1-gjvd.onrender.com/api/session", {
+        const response = await fetch("https://server-t48e.onrender.com/api/session", {
           method: "GET",
           credentials: "include",
         });
@@ -39,7 +39,7 @@ const Dashboard = () => {
   }, [navigate]);
 
   useEffect(() => {
-    fetch('https://server-1-gjvd.onrender.com/api/users')
+    fetch('https://server-t48e.onrender.com/api/users')
       .then(response => response.json())
       .then(data => {
         const monthlyData = Array(12).fill(0);
@@ -60,7 +60,7 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetch('https://server-1-gjvd.onrender.com/api/posts')
+    fetch('https://server-t48e.onrender.com/api/posts')
       .then(response => response.json())
       .then(posts => {
         setPrevPostCount(postCount);

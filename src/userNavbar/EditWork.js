@@ -134,7 +134,7 @@ const handleSave = async () => {
 
   try {
     const isUpdate = Boolean(work.id);
-    const endpoint = isUpdate ? `https://server-1-gjvd.onrender.com/api/work/${work.id}` : `https://server-1-gjvd.onrender.com/api/work`;
+    const endpoint = isUpdate ? `https://server-t48e.onrender.com/api/work/${work.id}` : `https://server-t48e.onrender.com/api/work`;
     const method = isUpdate ? "PUT" : "POST";
 
     const res = await fetch(endpoint, {

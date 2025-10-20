@@ -13,7 +13,7 @@ export default function AlumniTable() {
 
   // ✅ Fetch data
   useEffect(() => {
-    fetch("https://server-1-gjvd.onrender.com/api/alumni")
+    fetch("https://server-t48e.onrender.com/api/alumni")
       .then((res) => res.json())
       .then((data) => {
         setAlumni(data);

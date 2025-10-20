@@ -1,7 +1,7 @@
 import Sidebar from "../navbar/sidebar";
 import React, { useState, useEffect } from "react";
 import { PlusCircle, Save, Trash2 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 
 export default function GTSAdmin() {

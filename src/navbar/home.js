@@ -34,7 +34,7 @@ const UploadYearbook = ({ setYearbooks }) => {
 
     try {
       // 1️⃣  Get Cloudinary signature
-      const sigRes = await fetch(`https://server-1-gjvd.onrender.com/cloudinary-signature?folder=${folderName}`);
+      const sigRes = await fetch(`https://server-t48e.onrender.com/cloudinary-signature?folder=${folderName}`);
       const { timestamp, signature, apiKey, cloudName } = await sigRes.json();
 
       // 2️⃣  Upload all images directly to Cloudinary
@@ -65,7 +65,7 @@ const UploadYearbook = ({ setYearbooks }) => {
       backendForm.append("yearbookName", "Yearbook 2025");
       uploadedUrls.forEach((url) => backendForm.append("imageUrls", url));
 
-      const response = await fetch("https://server-1-gjvd.onrender.com/upload-yearbook", {
+      const response = await fetch("https://server-t48e.onrender.com/upload-yearbook", {
         method: "POST",
         body: backendForm,
       });
@@ -74,7 +74,7 @@ const UploadYearbook = ({ setYearbooks }) => {
       Swal.fire("Success", result.message, "success");
 
       // Refresh yearbooks list
-      const res = await fetch("https://server-1-gjvd.onrender.com/yearbooks");
+      const res = await fetch("https://server-t48e.onrender.com/yearbooks");
       const data = await res.json();
       setYearbooks(data);
 
@@ -170,13 +170,13 @@ const YearbookCard = ({ yearbook, setYearbooks }) => {
   const [loading, setLoading] = useState(true); // ✅ image loading
 
   useEffect(() => {
-    fetch(`https://server-1-gjvd.onrender.com/yearbook/${id}/images`)
+    fetch(`https://server-t48e.onrender.com/yearbook/${id}/images`)
       .then((res) => res.json())
       .then((images) => {
         if (images.length > 0) {
           const firstImage = images[0].file_path;
           setImageSrc(
-            firstImage.startsWith("http") ? firstImage : `https://server-1-gjvd.onrender.com/${firstImage}`
+            firstImage.startsWith("http") ? firstImage : `https://server-t48e.onrender.com/${firstImage}`
           );
         }
 
@@ -199,7 +199,7 @@ const YearbookCard = ({ yearbook, setYearbooks }) => {
     if (!result.isConfirmed) return;
 
     try {
-      const res = await fetch(`https://server-1-gjvd.onrender.com/yearbook/${id}`, {
+      const res = await fetch(`https://server-t48e.onrender.com/yearbook/${id}`, {
         method: "DELETE",
       });
 
@@ -266,7 +266,7 @@ const YearbookViewer = ({ yearbook, onClose }) => {
   const [loading, setLoading] = useState(true); // ✅ viewer loading
 
   useEffect(() => {
-    fetch(`https://server-1-gjvd.onrender.com/yearbook/${yearbook.id}/images`)
+    fetch(`https://server-t48e.onrender.com/yearbook/${yearbook.id}/images`)
       .then((res) => res.json())
       .then((data) => setImages(data))
       .catch((err) => console.error("Error fetching images:", err))
@@ -345,7 +345,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("https://server-1-gjvd.onrender.com/yearbooks")
+    fetch("https://server-t48e.onrender.com/yearbooks")
       .then((res) => res.json())
       .then((data) => setYearbooks(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Error fetching yearbooks:", err))

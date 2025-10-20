@@ -25,7 +25,7 @@ const Event = () => {
 
   const checkSession = async () => {
     try {
-      const res = await fetch("/api/session", { credentials: "include" });
+      const res = await fetch("https://server-t48e.onrender.com/api/session", { credentials: "include" });
       const data = await res.json();
       if (res.ok) setUserSession(data.user);
       else navigate("/login");
@@ -36,7 +36,7 @@ const Event = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("/api/events", { credentials: "include" });
+      const response = await fetch("https://server-t48e.onrender.com/api/events", { credentials: "include" });
       const data = await response.json();
       if (data.success) {
         setEvents(data.events);
@@ -60,7 +60,7 @@ const Event = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await fetch(`/api/events/${eventId}`, {
+          const response = await fetch(`https://server-t48e.onrender.com/api/events/${eventId}`, {
             method: "DELETE",
             credentials: "include",
           });
@@ -86,7 +86,7 @@ const Event = () => {
 
   const handleSaveEdit = async (eventId) => {
     try {
-      const response = await fetch(`/api/events/${eventId}`, {
+      const response = await fetch(`https://server-t48e.onrender.com/api/events/${eventId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

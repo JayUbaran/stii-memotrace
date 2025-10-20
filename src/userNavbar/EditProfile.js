@@ -44,7 +44,7 @@ export default function EditProfilePage({ onClose }) {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch("https://server-1-gjvd.onrender.com/api/profile", { credentials: "include" });
+      const response = await fetch("https://server-t48e.onrender.com/api/profile", { credentials: "include" });
       if (!response.ok) throw new Error("Failed to fetch user data");
       const userData = await response.json();
 
@@ -62,7 +62,7 @@ export default function EditProfilePage({ onClose }) {
       });
 
       // ✅ Fetch user's work
-      const workRes = await fetch("https://server-1-gjvd.onrender.com/api/work", { credentials: "include" });
+      const workRes = await fetch("https://server-t48e.onrender.com/api/work", { credentials: "include" });
       if (workRes.ok) {
         const workData = await workRes.json();
         setUpdatedUser((prev) => ({
@@ -72,7 +72,7 @@ export default function EditProfilePage({ onClose }) {
       }
 
      // ✅ Fetch user's education
-      const eduRes = await fetch("https://server-1-gjvd.onrender.com/api/education", { credentials: "include" });
+      const eduRes = await fetch("https://server-t48e.onrender.com/api/education", { credentials: "include" });
       if (eduRes.ok) {
         const eduData = await eduRes.json();
         setUpdatedUser((prev) => ({
@@ -201,7 +201,7 @@ const handleUserUpdate = async () => {
     }
 
     // Send update request
-    const res = await fetch(`https://server-1-gjvd.onrender.com/api/users/${user.id}`, {
+    const res = await fetch(`https://server-t48e.onrender.com/api/users/${user.id}`, {
       method: "PUT",
       body: formData,
       credentials: "include",
@@ -227,7 +227,7 @@ const handleUserUpdate = async () => {
       });
 
       if (code.isConfirmed) {
-        const confirmRes = await fetch("https://server-1-gjvd.onrender.com/confirm-email", {
+        const confirmRes = await fetch("https://server-t48e.onrender.com/confirm-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId: user.id, code: code.value }),
@@ -249,7 +249,7 @@ const handleUserUpdate = async () => {
         if (!workItem.position || !workItem.company) continue;
 
         try {
-          const workRes = await fetch("https://server-1-gjvd.onrender.com/api/work", {
+          const workRes = await fetch("https://server-t48e.onrender.com/api/work", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId: user.id, ...workItem }),
@@ -270,7 +270,7 @@ const handleUserUpdate = async () => {
         if (!eduItem.programType || !eduItem.fieldOfStudy) continue;
 
         try {
-          const eduRes = await fetch("https://server-1-gjvd.onrender.com/api/education", {
+          const eduRes = await fetch("https://server-t48e.onrender.com/api/education", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId: user.id, ...eduItem }),

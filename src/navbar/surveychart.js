@@ -15,7 +15,7 @@ export default function ChartsDashboard() {
   useEffect(() => {
     const fetchSurveyData = async () => {
       try {
-        const response = await fetch("/api/surveydata");
+        const response = await fetch("https://server-t48e.onrender.com/api/surveydata");
         const result = await response.json();
         if (response.ok) {
           setSurveyData(result);

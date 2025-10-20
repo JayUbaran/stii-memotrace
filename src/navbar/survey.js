@@ -56,7 +56,7 @@ const [selectedBatch, setSelectedBatch] = useState("");
 
   // Fetch schema
   useEffect(() => {
-    fetch("/api/survyschema")
+    fetch("https://server-t48e.onrender.com/api/survyschema")
       .then((res) => res.json())
       .then((result) => {
         if (result.success && result.schema) {
@@ -74,7 +74,7 @@ const [selectedBatch, setSelectedBatch] = useState("");
 
   // Fetch submissions
 useEffect(() => {
-  fetch("/api/allsubmissions")
+  fetch("https://server-t48e.onrender.com/api/allsubmissions")
     .then((res) => res.json())
     .then((result) => {
       if (result.success) {

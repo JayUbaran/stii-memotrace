@@ -42,7 +42,7 @@ const [loading, setLoading] = useState(false);
 
   const sendCodeToEmail = async (email) => {
     try {
-      const response = await fetch("https://server-1-gjvd.onrender.com/api/send-code", {
+      const response = await fetch("https://server-t48e.onrender.com/api/send-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -63,7 +63,7 @@ const [loading, setLoading] = useState(false);
     }
     setLoading(true);
     try {
-      const response = await fetch("https://server-1-gjvd.onrender.com/api/users");
+      const response = await fetch("https://server-t48e.onrender.com/api/users");
       const users = await response.json();
       const matchedUser = users.find(
         (u) => u.email?.toLowerCase() === formData.email.toLowerCase()
@@ -91,7 +91,7 @@ const [loading, setLoading] = useState(false);
   const handleVerifyClick = async () => {
       setLoading(true);
     try {
-      const response = await fetch("https://server-1-gjvd.onrender.com/api/verify-code", {
+      const response = await fetch("https://server-t48e.onrender.com/api/verify-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, code: userCode }),
@@ -124,7 +124,7 @@ const [loading, setLoading] = useState(false);
     }
   setLoading(true);
     try {
-      const response = await fetch("https://server-1-gjvd.onrender.com/api/reset-password", {
+      const response = await fetch("https://server-t48e.onrender.com/api/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

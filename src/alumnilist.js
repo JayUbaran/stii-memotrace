@@ -33,7 +33,7 @@ export default function CareerDashboard() {
   };
 
   useEffect(() => {
-    fetch("https://server-1-gjvd.onrender.com/api/allsubmissions")
+    fetch("https://server-t48e.onrender.com/api/allsubmissions")
       .then((res) => res.json())
       .then(({ data }) => {
         const employmentCounts = {};

@@ -11,7 +11,7 @@ const Gallery = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch("https://server-1-gjvd.onrender.com/api/posts", { credentials: "include" });
+        const res = await fetch("https://server-t48e.onrender.com/api/posts", { credentials: "include" });
         if (!res.ok) throw new Error("Failed to fetch posts");
         const data = await res.json();
 

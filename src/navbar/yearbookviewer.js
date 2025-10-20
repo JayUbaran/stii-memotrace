@@ -5,7 +5,7 @@ const YearbookViewer = ({ yearbook, onClose }) => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    fetch(`/yearbook/${yearbook.id}/images`)
+    fetch(`https://server-t48e.onrender.com/yearbook/${yearbook.id}/images`)
       .then((res) => res.json())
       .then((data) => setImages(data))
       .catch((err) => console.error("Error fetching images:", err));

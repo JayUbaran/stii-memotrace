@@ -31,7 +31,7 @@ const YearbookViewer = ({ yearbook, onClose }) => {
     const yearbookId = yearbook.related_id;
     if (!yearbookId) return;
 
-    fetch(`https://server-1-gjvd.onrender.com/yearbook/${yearbookId}/images`)
+    fetch(`https://server-t48e.onrender.com/yearbook/${yearbookId}/images`)
       .then((res) => res.json())
       .then((data) => setImages(data))
       .catch((err) => console.error("Error fetching images:", err));
@@ -143,7 +143,7 @@ const getValidImages = (images) =>
 
     if (notif.type === "event" || notif.type === "post") {
       try {
-        const res = await fetch(`https://server-1-gjvd.onrender.com/api/${notif.type}s/${notif.related_id}`);
+        const res = await fetch(`https://server-t48e.onrender.com/api/${notif.type}s/${notif.related_id}`);
         const data = await res.json();
         setRelatedContent(data);
       } catch (err) {
@@ -156,7 +156,7 @@ const getValidImages = (images) =>
   };
 
   useEffect(() => {
-    fetch("https://server-1-gjvd.onrender.com/api/notifications")
+    fetch("https://server-t48e.onrender.com/api/notifications")
       .then((res) => res.json())
       .then((data) => {
         const parsedData = data.map((notif) => ({
@@ -185,7 +185,7 @@ const getValidImages = (images) =>
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("https://server-1-gjvd.onrender.com/api/user", {
+        const response = await fetch("https://server-t48e.onrender.com/api/user", {
           credentials: "include",
         });
         if (!response.ok) throw new Error("Failed to fetch user data");

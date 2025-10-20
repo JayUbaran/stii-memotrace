@@ -23,7 +23,7 @@ export default function EmployerSection({ onClose }) {
   useEffect(() => {
     const fetchInviteCount = async () => {
       try {
-        const res = await fetch("https://server-1-gjvd.onrender.com/api/employer-invite-count", {
+        const res = await fetch("https://server-t48e.onrender.com/api/employer-invite-count", {
           credentials: "include",
         });
         const data = await res.json();

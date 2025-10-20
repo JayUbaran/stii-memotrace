@@ -31,7 +31,7 @@ export default function CareerPathDashboard() {
 
   // Fetch data
   useEffect(() => {
-    fetch("/api/allalumni")
+    fetch("https://server-t48e.onrender.com/api/allalumni")
       .then((res) => res.json())
       .then((data) => {
         const uniqueCourses = [...new Set(data.map((a) => a.course))];
@@ -40,11 +40,11 @@ export default function CareerPathDashboard() {
         setYears(uniqueYears);
       });
 
-    fetch("/api/workdata")
+    fetch("https://server-t48e.onrender.com/api/workdata")
       .then((res) => res.json())
       .then((data) => setWorks(data));
 
-    fetch("/api/educationdata")
+    fetch("https://server-t48e.onrender.com/api/educationdata")
       .then((res) => res.json())
       .then((data) => setEducations(data));
   }, []);

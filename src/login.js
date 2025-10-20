@@ -22,7 +22,7 @@ const [loading, setLoading] = useState(false);
     }
   setLoading(true); 
     try {
-      const response = await fetch("https://server-1-gjvd.onrender.com/api/login", {
+      const response = await fetch("https://server-t48e.onrender.com/api/login", {
         method: "POST",
         
         credentials: "include", // This is important for handling sessions
@@ -79,7 +79,7 @@ const [loading, setLoading] = useState(false);
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch("https://server-1-gjvd.onrender.com/api/session", {
+        const response = await fetch("https://server-t48e.onrender.com/api/session", {
           method: "GET",
           credentials: "include", // Include cookies
         });

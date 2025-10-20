@@ -15,7 +15,7 @@ export default function Post({ onSearch }) {
 
   const handleClick = () => {
     if (inputValue.trim()) {
-      navigate(`/searchresult?query=${encodeURIComponent(inputValue)}`);
+      navigate(`https://server-t48e.onrender.com/searchresult?query=${encodeURIComponent(inputValue)}`);
     }
   };
 
@@ -23,7 +23,7 @@ export default function Post({ onSearch }) {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch("/api/session", {
+        const response = await fetch("https://server-t48e.onrender.com/api/session", {
           method: "GET",
           credentials: "include",
         });

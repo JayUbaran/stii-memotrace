@@ -67,7 +67,7 @@ const cropImage = async () => {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch("/api/user", {
+      const response = await fetch("https://server-t48e.onrender.com/api/user", {
         credentials: "include",
       });
       if (!response.ok) {
@@ -106,7 +106,7 @@ const cropImage = async () => {
         formData.append("profile", file);
       }
   
-      const res = await fetch(`/api/users/${user.id}`, {
+      const res = await fetch(`https://server-t48e.onrender.com/api/users/${user.id}`, {
         method: "PUT",
         body: formData,
         credentials: "include",
@@ -138,7 +138,7 @@ const cropImage = async () => {
         }).then(async (response) => {
           if (response.isConfirmed) {
             try {
-              const confirmRes = await fetch('/confirm-email', {
+              const confirmRes = await fetch('https://server-t48e.onrender.com/confirm-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ code: response.value, userId: user.id }),
@@ -178,7 +178,7 @@ const cropImage = async () => {
     }
   
     try {
-      const response = await fetch(`/api/users/${user.id}/change-password`, {
+      const response = await fetch(`https://server-t48e.onrender.com/api/users/${user.id}/change-password`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -202,7 +202,7 @@ const cropImage = async () => {
       await Swal.fire({ icon: "success", title: "Success", text: "Password updated successfully! You will be logged out." });
   
       // Call logout API
-      await fetch("/api/logout", {
+      await fetch("https://server-t48e.onrender.com/api/logout", {
         method: "POST",
         credentials: "include",
       });

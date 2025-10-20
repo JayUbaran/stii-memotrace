@@ -80,7 +80,7 @@ const Result = () => {
      // 🔹 Fetch user session
     const checkSession = async () => {
       try {
-        const res = await fetch("/api/session", { credentials: "include" });
+        const res = await fetch("https://server-t48e.onrender.com/api/session", { credentials: "include" });
         const data = await res.json();
         if (res.ok) setUserSession(data.user);
         else navigate("/login");
@@ -92,7 +92,7 @@ const Result = () => {
     // 🧍 Fetch Logged-in User
     const fetchUser = async () => {
       try {
-        const res = await fetch("/api/user", { credentials: "include" });
+        const res = await fetch("https://server-t48e.onrender.com/api/user", { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           setUser(data);
@@ -105,7 +105,7 @@ const Result = () => {
     // 📰 Fetch Posts
     const fetchPosts = async () => {
     try {
-      const response = await fetch("/api/posts", { credentials: "include" });
+      const response = await fetch("https://server-t48e.onrender.com/api/posts", { credentials: "include" });
       if (!response.ok) throw new Error(`Failed to fetch posts: ${response.status}`);
   
       const postData = await response.json();
@@ -140,7 +140,7 @@ const Result = () => {
     // 🎟️ Fetch Events
     const fetchEvents = async () => {
       try {
-        const res = await fetch("/api/events", { credentials: "include" });
+        const res = await fetch("https://server-t48e.onrender.com/api/events", { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           const mapped = (data.events || []).map((event) => ({
@@ -189,7 +189,7 @@ const Result = () => {
       if (!confirm.isConfirmed) return;
   
       try {
-        const endpoint = type === "job" ? `/api/posts/${id}` : `/api/events/${id}`;
+        const endpoint = type === "job" ? `https://server-t48e.onrender.com/api/posts/${id}` : `https://server-t48e.onrender.com/api/events/${id}`;
         const res = await fetch(endpoint, {
           method: "DELETE",
           credentials: "include",
@@ -215,7 +215,7 @@ const Result = () => {
     // ✏️ Edit Post
     const editPost = async (id) => {
       try {
-        const res = await fetch(`/api/posts/${id}`, {
+        const res = await fetch(`https://server-t48e.onrender.com/api/posts/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content: editedContent }),
@@ -278,7 +278,7 @@ const Result = () => {
   
     // Fetch chat history
     try {
-      const res = await fetch(`/api/messages/${currentUser.id}/${userToChat.id}`);
+      const res = await fetch(`https://server-t48e.onrender.com/api/messages/${currentUser.id}/${userToChat.id}`);
       const data = await res.json();
       setMessages(
         data.map((m) => ({
@@ -296,7 +296,7 @@ const Result = () => {
    // Unsend message
     const handleUnsendMessage = async (id) => {
     try {
-      const res = await fetch(`/api/messages/${id}`, { method: "DELETE" });
+      const res = await fetch(`https://server-t48e.onrender.com/api/messages/${id}`, { method: "DELETE" });
       if (res.ok) {
         setMessages((prev) => prev.filter((m) => m.id !== id));
         setActiveMsgMenu(null);
@@ -319,7 +319,7 @@ const Result = () => {
   
     // Save to database
     try {
-      await fetch("/api/messages", {
+      await fetch("https://server-t48e.onrender.com/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -26,7 +26,7 @@ export default function GTSPage() {
   }, [data]);
 
   useEffect(() => {
-    fetch("/api/survyschema")
+    fetch("https://server-t48e.onrender.com/api/survyschema")
       .then((res) => res.json())
       .then((result) => {
         if (result.success && result.schema) {
@@ -48,7 +48,7 @@ export default function GTSPage() {
 
   const persistSchema = async (schemaToSave) => {
   try {
-    await fetch("/api/survyschema", {
+    await fetch("https://server-t48e.onrender.com/api/survyschema", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(schemaToSave),

@@ -11,7 +11,7 @@ export default function AdminFeedbackTable() {
 
   // 🔹 Fetch schema
   useEffect(() => {
-    fetch("/api/feedback-schema")
+    fetch("https://server-t48e.onrender.com/api/feedback-schema")
       .then((res) => res.json())
       .then((result) => {
         if (result.success && result.schema) {
@@ -37,7 +37,7 @@ export default function AdminFeedbackTable() {
         })),
       };
 
-      const res = await fetch("/api/feedback-schema", {
+      const res = await fetch("https://server-t48e.onrender.com/api/feedback-schema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(cleanedSchema),

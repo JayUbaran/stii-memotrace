@@ -22,7 +22,7 @@ const Courses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch("/api/courses");
+        const response = await fetch("https://server-t48e.onrender.com/api/courses");
         if (!response.ok) throw new Error("Failed to fetch courses");
         const data = await response.json();
         setCourses(data); 
@@ -63,7 +63,7 @@ const Courses = () => {
     const surveyData = { selectedCourse,  workTitles };
 
     try {
-      const response = await fetch("/api/surveyop", {
+      const response = await fetch("https://server-t48e.onrender.com/api/surveyop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(surveyData),
