@@ -61,12 +61,7 @@ const ChatApp = () => {
           ...conv,
           unseen_count: conv.unseen_count || 0,
         }));
-        setConversations((prev) =>
-          prev.map((c) =>
-            c.partner_id === partnerId ? { ...c, unseen_count: 0 } : c
-          )
-        );
-
+        setConversations(updated);
       })
       .catch(console.error);
   };
@@ -189,7 +184,12 @@ const handleSelectUser = async (user) => {
     );
     const data = await res.json();
     if (data.success) {
-      // Only reload after seen is confirmed
+      // ✅ Immediately update the unseen count in the UI
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.partner_id === partnerId ? { ...c, unseen_count: 0 } : c
+        )
+      );
       loadConversations();
     }
   } catch (err) {
