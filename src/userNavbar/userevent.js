@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {  FaMapMarkerAlt , FaTimes,FaPaperPlane, FaEllipsisV } from "react-icons/fa";
-import {  useMap } from 'react-leaflet';
 
 import { BsThreeDotsVertical } from "react-icons/bs";
 import "leaflet/dist/leaflet.css"; 
@@ -10,12 +9,8 @@ import Swal from 'sweetalert2';
 
 
 const Event = () => {
-    const [content, setContent] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    const [location, setLocation] = useState(null);
-    const [imageFiles, setImageFiles] = useState([]);  // Store actual files
     const [searchResults, setSearchResults] = useState([]);
-    const [showMap, setShowMap] = useState(false);
     const [events, setEvents] = useState([]); // Store fetched events
     const [selectedImage, setSelectedImage] = useState(null);
     const [user, setUser] = useState(null);
@@ -29,7 +24,7 @@ const Event = () => {
   const messagesEndRef = useRef(null);
   const [activeMsgMenu, setActiveMsgMenu] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
-  const { id } = useParams();
+ 
   
 const currentUser = user;
 
@@ -91,73 +86,6 @@ const checkSession = async () => {
         }
     }, [searchQuery]);
 
-    // Component to update map view when location changes
-    const ChangeMapView = ({ coords }) => {
-        const map = useMap();
-        useEffect(() => {
-            map.setView(coords, 15);
-        }, [coords, map]);
-        return null;
-    };
-
-    const handleLocationSelect = (place) => {
-        const newLocation = {
-            lat: parseFloat(place.lat),
-            lng: parseFloat(place.lon),
-            name: place.display_name
-        };
-        setLocation(newLocation);
-        setSearchQuery(place.display_name);
-        setSearchResults([]);
-        setShowMap(true); // Show the map when a location is selected
-    };
-
-    const handleImageUpload = (event) => {
-      const files = Array.from(event.target.files);
-      setImageFiles(prevImages => [...prevImages, ...files]); // Store actual files
-  };
-
-  const handlePost = async () => {
-    if (!content.trim() || !location) {
-      Swal.fire("Warning", "Please provide content and select a location.", "warning");
-      return;
-    }
-  
-    const formData = new FormData();
-    formData.append("content", content);
-    formData.append("location_name", location.name);
-    formData.append("latitude", location.lat);
-    formData.append("longitude", location.lng);
-  
-    imageFiles.forEach((file) => {
-      formData.append("images", file);
-    });
-  
-    try {
-      const response = await fetch("https://server-t48e.onrender.com/api/events", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-  
-      const data = await response.json();
-      if (data.success) {
-        Swal.fire("Success!", "Event posted successfully.", "success");
-  
-        // Reset form
-        setContent("");
-        setSearchQuery("");
-        setLocation(null);
-        setImageFiles([]);
-        setShowMap(false);
-      } else {
-        Swal.fire("Error!", data.error || "Failed to post event.", "error");
-      }
-    } catch (error) {
-      Swal.fire("Error!", "Failed to post event.", "error");
-    }
-  };
-  
 
 const handleDelete = async (eventId) => {
   Swal.fire({

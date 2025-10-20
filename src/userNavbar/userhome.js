@@ -11,13 +11,13 @@ const YearbookCard = ({ yearbook }) => {
   const [isOpen, setIsOpen] = useState(false);
 
 useEffect(() => {
-  fetch(`https://server-t48e.onrender.coms/yearbook/${id}/images`)
+  fetch(`https://server-t48e.onrender.com/yearbook/${id}/images`)
     .then((res) => res.json())
     .then((images) => {
       if (images.length > 0) {
         let imageUrl = images[0].file_path;
         if (!imageUrl.startsWith("http")) {
-          imageUrl = `https://server-t48e.onrender.coms/${imageUrl}`;
+          imageUrl = `https://server-t48e.onrender.com/${imageUrl}`;
         }
         setImageSrc(imageUrl);
 
@@ -69,7 +69,7 @@ const YearbookViewer = ({ yearbook, onClose }) => {
 
   // Fetch images
   useEffect(() => {
-    fetch(`https://server-t48e.onrender.coms/yearbook/${yearbook.id}/images`)
+    fetch(`https://server-t48e.onrender.com/yearbook/${yearbook.id}/images`)
       .then((res) => res.json())
       .then((data) => {
         setImages(data);
@@ -174,7 +174,7 @@ const YearbookViewer = ({ yearbook, onClose }) => {
                   className="flex justify-center items-center bg-white"
                 >
                   <img
-                    src={img.file_path.startsWith("http") ? img.file_path : `https://server-t48e.onrender.coms/${img.file_path}`}
+                    src={img.file_path.startsWith("http") ? img.file_path : `https://server-t48e.onrender.com/${img.file_path}`}
                     alt={`Page ${index + 1}`}
                     className="w-full h-full object-contain sm:object-cover rounded"
                     draggable={false}
@@ -206,7 +206,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("https://server-t48e.onrender.coms/api/user", {
+        const res = await fetch("https://server-t48e.onrender.com/api/user", {
           method: "GET",
           credentials: "include",
         });
@@ -248,7 +248,7 @@ export default function Dashboard() {
 
   // ✅ Fetch yearbooks
   useEffect(() => {
-    fetch("https://server-t48e.onrender.coms/yearbooks")
+    fetch("https://server-t48e.onrender.com/yearbooks")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setYearbooks(data);
