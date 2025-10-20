@@ -18,6 +18,9 @@ const Event = () => {
   const [activeMsgMenu, setActiveMsgMenu] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
   const messagesEndRef = useRef(null);
+  const [selectedEventImages, setSelectedEventImages] = useState([]);
+const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const navigate = useNavigate();
 
   const currentUser = user;
@@ -28,6 +31,27 @@ const Event = () => {
     fetchEvents();
   }, []);
 
+  // Update your image click handler
+const openImagePreview = (images, index) => {
+  setSelectedEventImages(images);
+  setCurrentImageIndex(index);
+};
+
+// Navigation functions
+const nextImage = () => {
+  setCurrentImageIndex((prev) => (prev + 1) % selectedEventImages.length);
+};
+
+const prevImage = () => {
+  setCurrentImageIndex((prev) =>
+    prev === 0 ? selectedEventImages.length - 1 : prev - 1
+  );
+};
+
+const closePreview = () => {
+  setSelectedEventImages([]);
+  setCurrentImageIndex(0);
+};
   // Session check
   const checkSession = async () => {
     try {
@@ -165,38 +189,68 @@ const Event = () => {
         <div key={event.id} className="border rounded-lg p-4 shadow-sm bg-white relative z-10">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <div
-              className="flex items-center space-x-3 cursor-pointer"
-              onClick={() => navigate(user?.id === event.user_id ? "/userprofile" : `/profiles/${event.user_id}`)}
-            >
-              {event.profile ? (
-                <img
-                  src={event.profile}
-                  alt="Profile"
-                  className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
-                />
-              ) : (
-                <div className="w-10 h-10 bg-blue-500 rounded-full flex justify-center items-center text-white font-bold">
-                  {event.first_name?.charAt(0) || "?"}
-                </div>
-              )}
-              <div>
-                <h2 className="font-semibold text-gray-800">{event.first_name || "Unknown User"}</h2>
-                <p className="text-xs text-gray-500">
-                  {new Date(event.created_at).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-                </p>
-              </div>
-            </div>
+             <div
+                  className="flex items-center justify-between p-2 sm:p-3 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition cursor-pointer"
+                  onClick={() => {
+                    if (user?.id === event.user_id) {
+                      navigate("/userprofile"); // your own profile
+                    } else {
+                      navigate(`/profiles/${event.user_id}`); // another user's public profile
+                    }
+                  }}
+                >
+                  {/* Profile + Name */}
+                  <div className="flex items-center space-x-3">
+                    {event.profile ? (
+                      <img
+                        src={event.profile}
+                        alt="Profile"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-gray-200"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-full flex justify-center items-center text-white font-bold text-lg">
+                        {event.first_name?.charAt(0) || "?"}
+                      </div>
+                    )}
 
-            {/* Message button */}
-            {user?.id !== event.user_id && (
-              <button
-                onClick={(e) => { e.stopPropagation(); handleMessageClick(event); }}
-                className="bg-blue-600 text-white px-3 py-1.5 text-xs rounded-md hover:bg-blue-700 transition"
-              >
-                Message
-              </button>
-            )}
+                    <div>
+                      <h2 className="font-semibold text-gray-800 text-sm sm:text-base">
+                        {event.first_name || "Unknown User"}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        {new Date(event.created_at).toLocaleString([], {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 🔹 Message Button */}
+                  {user?.id !== event.user_id && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // prevent parent click navigation
+                        handleMessageClick(event);
+                      }}
+                      className="
+                        bg-blue-600 text-white 
+                        px-3 py-1.5 
+                        text-xs sm:text-sm 
+                        rounded-md 
+                        hover:bg-blue-700 
+                        active:scale-95 
+                        transition
+                      "
+                    >
+                      Message
+                    </button>
+                  )}
+                </div>
+
+
 
             {/* Dropdown menu for edit/delete */}
             {user?.id === event.user_id && (
@@ -243,7 +297,7 @@ const Event = () => {
                   src={image}
                   alt="Event"
                   className="rounded-lg cursor-pointer"
-                  onClick={() => setSelectedImage(image)}
+                  onClick={() => openImagePreview(event.images, idx)}
                 />
               ))}
             </div>
@@ -251,19 +305,50 @@ const Event = () => {
         </div>
       ))}
 
-      {/* Image Preview Modal */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 w-screen h-screen bg-black bg-opacity-75 flex justify-center items-center z-50"
-          onClick={() => setSelectedImage(null)}
+{/* Image Preview Modal */}
+{selectedEventImages.length > 0 && (
+  <div className="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center z-50">
+    <button
+      onClick={closePreview}
+      className="absolute top-4 right-6 text-white text-3xl"
+    >
+      <FaTimes />
+    </button>
+
+    <div className="flex items-center justify-center relative w-full max-w-3xl">
+      {selectedEventImages.length > 1 && (
+        <button
+          onClick={prevImage}
+          className="absolute left-4 text-white text-3xl p-2 bg-black bg-opacity-40 rounded-full hover:bg-opacity-70"
         >
-          <img
-            src={selectedImage}
-            alt="Expanded Event"
-            className="max-w-full max-h-full rounded-lg shadow-lg"
-          />
-        </div>
+          &#8249;
+        </button>
       )}
+
+      <img
+        src={selectedEventImages[currentImageIndex]}
+        alt="Preview"
+        className="max-h-[80vh] w-auto object-contain rounded-lg shadow-lg"
+      />
+
+      {selectedEventImages.length > 1 && (
+        <button
+          onClick={nextImage}
+          className="absolute right-4 text-white text-3xl p-2 bg-black bg-opacity-40 rounded-full hover:bg-opacity-70"
+        >
+          &#8250;
+        </button>
+      )}
+    </div>
+
+    {selectedEventImages.length > 1 && (
+      <p className="text-gray-300 mt-3 text-sm">
+        {currentImageIndex + 1} / {selectedEventImages.length}
+      </p>
+    )}
+  </div>
+)}
+
 
       {/* Chat modal */}
       {selectedUser && (

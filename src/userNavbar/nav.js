@@ -248,9 +248,6 @@ const getValidImages = (images) =>
                       <h1 className="px-2 text-sm font-medium">
                         {notif.first_name} {notif.message}
                       </h1>
-
-                    
-
                       {/* Yearbook Preview */}
                       {notif.type === "yearbook" && notif.yearbook_image && (
                         <div className="mt-2 grid grid-cols-2 gap-2">
@@ -335,9 +332,8 @@ const getValidImages = (images) =>
               const src =
                 img.startsWith("http") // Cloudinary or any URL
                   ? img
-                  : img.startsWith("data:") // Base64 encoded
-                  ? img
-                  : `/postuploads/${img}`; // Local fallback (legacy)
+                  : img.startsWith("data:"); // Base64 encoded
+
 
               return (
                 <img
@@ -346,14 +342,13 @@ const getValidImages = (images) =>
                   alt={`Post Image ${idx + 1}`}
                   className="w-full h-48 object-cover rounded-lg border border-gray-300 cursor-pointer hover:opacity-90 transition"
                   onClick={() => {
-                    const validImages = getValidImages(
-                      selectedNotification.post_images
-                    );
+                    const validImages = getValidImages(selectedNotification.post_images || selectedNotification.event_images || []);
                     if (validImages.length === 0) return;
                     setPreviewImages(validImages);
-                    setCurrentIndex(idx);
+                    setCurrentIndex(0);
                     setShowPreview(true);
                   }}
+
                   onError={(e) => {
                     // ✅ hide broken images safely
                     e.currentTarget.style.display = "none";
@@ -370,11 +365,11 @@ const getValidImages = (images) =>
   </>
 )}
 
-{/* 🖼️ Preview Modal */}
-{showPreview && previewImages.length > 0 && (
+{/* // Combine preview modal logic */}
+{(showPreview || showImageModal) && previewImages.length > 0 && (
   <div className="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center z-50">
     <button
-      onClick={() => setShowPreview(false)}
+      onClick={() => { setShowPreview(false); setShowImageModal(false); setPreviewImages([]); }}
       className="absolute top-4 right-6 text-white text-3xl"
     >
       <FaTimes />
@@ -384,9 +379,7 @@ const getValidImages = (images) =>
       {previewImages.length > 1 && (
         <button
           onClick={() =>
-            setCurrentIndex((prev) =>
-              prev === 0 ? previewImages.length - 1 : prev - 1
-            )
+            setCurrentIndex((prev) => (prev === 0 ? previewImages.length - 1 : prev - 1))
           }
           className="absolute left-4 text-white text-3xl p-2 bg-black bg-opacity-40 rounded-full hover:bg-opacity-70"
         >
@@ -399,27 +392,15 @@ const getValidImages = (images) =>
         alt="Preview"
         className="max-h-[80vh] w-auto object-contain rounded-lg shadow-lg"
         onError={() => {
-          // remove broken image from array
-          setPreviewImages((prev) =>
-            prev.filter((_, i) => i !== currentIndex)
-          );
-
-          // adjust currentIndex if needed
-          setCurrentIndex((prev) =>
-            prev >= previewImages.length - 1 ? 0 : prev
-          );
+          setPreviewImages((prev) => prev.filter((_, i) => i !== currentIndex));
+          setCurrentIndex((prev) => (prev >= previewImages.length - 1 ? 0 : prev));
         }}
       />
-
-
-
 
       {previewImages.length > 1 && (
         <button
           onClick={() =>
-            setCurrentIndex((prev) =>
-              prev === previewImages.length - 1 ? 0 : prev + 1
-            )
+            setCurrentIndex((prev) => (prev === previewImages.length - 1 ? 0 : prev + 1))
           }
           className="absolute right-4 text-white text-3xl p-2 bg-black bg-opacity-40 rounded-full hover:bg-opacity-70"
         >
@@ -428,74 +409,46 @@ const getValidImages = (images) =>
       )}
     </div>
 
-    <p className="text-gray-300 mt-3 text-sm">
-      {currentIndex + 1} / {previewImages.length}
-    </p>
+    {previewImages.length > 1 && (
+      <p className="text-gray-300 mt-3 text-sm">
+        {currentIndex + 1} / {previewImages.length}
+      </p>
+    )}
   </div>
 )}
 
-{/* 🎉 Event Content */}
-{selectedNotification.type === "event" && (
-  <>
-    {selectedNotification.event_content ? (
-      <>
-        {/* 📝 Event Text */}
-        <p className="text-gray-700 dark:text-gray-300 mb-2">
-          {selectedNotification.event_content}
-        </p>
-
-        {/* 📍 Event Location */}
-        {selectedNotification.event_location && (
-          <p className="text-sm text-blue-500 mt-1 flex items-center gap-1">
-            📍 <span>{selectedNotification.event_location}</span>
-          </p>
-        )}
-
-        {/* 🖼️ Event Images */}
-        {selectedNotification.event_images &&
-          selectedNotification.event_images
-            .filter((img) => img && img.trim() !== "")
-            .map((img, idx) => {
-              // 🌐 Determine the correct source
-              const src =
-                img.startsWith("http") // Cloudinary or external link
-                  ? img
-                  : img.startsWith("data:") // Base64
-                  ? img
-                  : `/eventuploads/${img}`; // Local fallback (legacy)
-
-              return (
-                <img
-                  key={idx}
-                  src={src}
-                  alt={`Event Image ${idx + 1}`}
-                  className="mt-3 w-full max-h-[70vh] object-contain rounded-lg border border-gray-300 cursor-pointer hover:opacity-90 transition"
-                  onClick={() => {
-                    const validImages = (selectedNotification.event_images || []).filter(
-                      (i) => i && i.trim() !== ""
-                    );
-                    if (validImages.length === 0) return;
-
-                    setModalImageSrc(src);
-                    setPreviewImages(validImages);
-                    setCurrentIndex(idx);
-                    setShowImageModal(true);
-                  }}
-                  onError={(e) => {
-                    // ✅ Hide broken image elements
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
-              );
-            })}
-      </>
-    ) : (
-      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-        <span>🔒</span> This content isn't available right now.
-      </div>
-    )}
-  </>
-)}
+                {/* Event Content */}
+                {selectedNotification.type === "event" && (
+                  <>
+                    {selectedNotification.event_content ? (
+                      <>
+                        <p className="text-gray-700 dark:text-gray-300">{selectedNotification.event_content}</p>
+                        {selectedNotification.event_location && (
+                          <p className="text-sm text-blue-500 mt-1">
+                            📍 {selectedNotification.event_location}
+                          </p>
+                        )}
+                        {selectedNotification.event_images &&
+                          selectedNotification.event_images.map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={img}
+                              alt={`Event Image ${idx + 1}`}
+                              onClick={() => {
+                                setModalImageSrc(img);
+                                setShowImageModal(true);
+                              }}
+                              className="mt-3 w-full max-h-[70vh] object-contain rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition"
+                            />
+                          ))}
+                      </>
+                    ) : (
+                      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <span>🔒</span> This content isn't available right now.
+                      </div>
+                    )}
+                  </>
+                )}
 
                 {/* Yearbook full view */}
                 {selectedNotification.type === "yearbook" && selectedNotification.yearbook_image && (
