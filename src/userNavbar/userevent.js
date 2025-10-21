@@ -273,7 +273,14 @@ const closePreview = () => {
           </div>
 
           {/* Content */}
-          <p className="mt-3">{event.content}</p>
+          <div
+            className="mt-3 text-gray-800 leading-relaxed whitespace-pre-line"
+            dangerouslySetInnerHTML={{
+              __html: event.content
+                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // optional: bold text inside ** **
+            }}
+          />
+
           {event.location_name && (
             <p className="text-gray-600 mt-3">
               <FaMapMarkerAlt className="inline-block text-red-500 mr-1" />

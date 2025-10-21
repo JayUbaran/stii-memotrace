@@ -19,6 +19,7 @@ const Event = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("✅ Event component mounted");
     fetchEvents();
     checkSession();
   }, []);

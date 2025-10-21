@@ -46,25 +46,38 @@ export default function Post({ onSearch }) {
           </div>
 
           <div className="flex gap-4 items-center mb-5">
-            <button onClick={() => { setShowPostSection(true); }} className={`px-4 py-2 font-bold rounded-lg ${showPostSection ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>Post</button>
-            <button onClick={() => { setShowPostSection(false); }} className={`px-4 py-2 font-bold rounded-lg ${!showPostSection ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>Event</button>
+            <button
+              onClick={() => setShowPostSection(true)}
+              className={`px-4 py-2 font-bold rounded-lg transition ${
+                showPostSection ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Post
+            </button>
+            <button
+              onClick={() => setShowPostSection(false)}
+              className={`px-4 py-2 font-bold rounded-lg transition ${
+                !showPostSection ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Event
+            </button>
           </div>
+
         
 
-        {/* Event Page  */}
-        {showPostSection ? (
-           <>
-           {/* Create Post Section */}
-              <CreateAdminPost />
-           {/* Posts Section */}
-        <div className="space-y-6 mb-24">
-           <AdminPost />
-        </div>
-         </>
-        
-      ) : (
-        <Event />
-)}
+       <div className="transition-all duration-300 ease-in-out">
+  {showPostSection ? (
+    <>
+      <CreateAdminPost />
+      <div className="space-y-6 mb-24">
+        <AdminPost />
+      </div>
+    </>
+  ) : (
+    <Event />
+  )}
+</div>
 
         </div>
       </div>

@@ -22,7 +22,7 @@ const filteredSections = schema.sections.filter((sec) => {
   return secMatch || fieldMatch;
 });
   useEffect(() => {
-    fetch("/api/schema")
+    fetch("https://server-t48e.onrender.com/api/schema")
       .then((res) => res.json())
       .then((result) => {
         if (result.success && result.schema) {
@@ -50,7 +50,7 @@ const filteredSections = schema.sections.filter((sec) => {
       })),
     };
 
-      const res = await fetch("/api/schema", {
+      const res = await fetch("https://server-t48e.onrender.com/api/schema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(cleanedSchema),

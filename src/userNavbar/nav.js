@@ -95,7 +95,7 @@ const YearbookViewer = ({ yearbook, onClose }) => {
                   className="w-auto h-auto flex justify-center items-center"
                 >
                   <img
-                    src={img.file_path.startsWith("http") ? img.file_path : `https://server-t48e.onrender.com/${img.file_path}`}
+                    src={img.file_path}
                     alt={`Page ${index + 1}`}
                     className="max-w-full max-h-full object-contain rounded-lg"
                   />
@@ -130,9 +130,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
 
 
 const getValidImages = (images) =>
-  images
-    .filter((img) => img && img.trim() !== "")
-    .map((img) => img.startsWith("http") ? img : `https://server-t48e.onrender.com/${img}`);
+  images.filter((img) => img && img.startsWith("http"));
 
 
   const handleNotificationClick = async (notif) => {
@@ -244,7 +242,8 @@ const getValidImages = (images) =>
                     <div className="flex-1">
                       <h1 className="px-2 text-sm font-medium">
                         {notif.first_name} {notif.message}
-                      </h1>
+                      </h1>                 
+
                       {/* Yearbook Preview */}
                       {notif.type === "yearbook" && notif.yearbook_image && (
                         <div className="mt-2 grid grid-cols-2 gap-2">
@@ -316,38 +315,43 @@ const getValidImages = (images) =>
   <>
     {selectedNotification.post_content ? (
       <>
-        <p className="text-gray-700 dark:text-gray-300 mb-2">
-          {selectedNotification.post_content}
-        </p>
+        
+      <div
+        className="mt-3 text-gray-800 leading-relaxed whitespace-pre-line"
+        dangerouslySetInnerHTML={{
+          __html:selectedNotification.post_content
+            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // optional: bold text inside ** **
+        }}
+      />
 
-        {/* 🖼️ Images */}
+        {/* Images */}
         {selectedNotification.post_images &&
           selectedNotification.post_images
-            .filter((img) => img && img.trim() !== "")
+            .filter((img) => img && img !== "") // ✅ remove empty or null images
             .map((img, idx) => {
-              // 🌐 Support for Cloudinary + base64 + local fallbacks
+              // Determine correct src
               const src =
-                img.startsWith("http") // Cloudinary or any URL
+                img.startsWith("http") || img.startsWith("data:")
                   ? img
-                  : `https://server-t48e.onrender.com/${img}`; // Base64 encoded
-
+                  : `data:image/jpeg;base64,${img}`;
 
               return (
                 <img
                   key={idx}
                   src={src}
                   alt={`Post Image ${idx + 1}`}
-                  className="w-full h-48 object-cover rounded-lg border border-gray-300 cursor-pointer hover:opacity-90 transition"
-                  onClick={() => {
-                    setPreviewImages(getValidImages(selectedNotification.post_images || selectedNotification.event_images || []));
-                    setCurrentIndex(0);
+                  className="w-full h-48 object-cover rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition"
+                onClick={() => {
+                    const validImages = getValidImages(selectedNotification.post_images);
+                    if (validImages.length === 0) return; // nothing to preview
+
+                    setPreviewImages(validImages);
+                    setCurrentIndex(idx);
                     setShowPreview(true);
                   }}
 
-                  onError={(e) => {
-                    // ✅ hide broken images safely
-                    e.currentTarget.style.display = "none";
-                  }}
+
+                  onError={(e) => (e.currentTarget.style.display = "none")} // ✅ hide broken images
                 />
               );
             })}
@@ -359,10 +363,12 @@ const getValidImages = (images) =>
     )}
   </>
 )}
-{(showPreview || showImageModal) && previewImages.length > 0 && (
+
+{/* 🖼️ Preview Modal */}
+{showPreview && previewImages.length > 0 && (
   <div className="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center z-50">
     <button
-      onClick={() => { setShowPreview(false); setShowImageModal(false); setPreviewImages([]); }}
+      onClick={() => setShowPreview(false)}
       className="absolute top-4 right-6 text-white text-3xl"
     >
       <FaTimes />
@@ -372,7 +378,9 @@ const getValidImages = (images) =>
       {previewImages.length > 1 && (
         <button
           onClick={() =>
-            setCurrentIndex((prev) => (prev === 0 ? previewImages.length - 1 : prev - 1))
+            setCurrentIndex((prev) =>
+              prev === 0 ? previewImages.length - 1 : prev - 1
+            )
           }
           className="absolute left-4 text-white text-3xl p-2 bg-black bg-opacity-40 rounded-full hover:bg-opacity-70"
         >
@@ -385,15 +393,24 @@ const getValidImages = (images) =>
         alt="Preview"
         className="max-h-[80vh] w-auto object-contain rounded-lg shadow-lg"
         onError={() => {
-          setPreviewImages((prev) => prev.filter((_, i) => i !== currentIndex));
-          setCurrentIndex((prev) => (prev >= previewImages.length - 1 ? 0 : prev));
+          // remove broken image from array
+          setPreviewImages((prev) =>
+            prev.filter((_, i) => i !== currentIndex)
+          );
+
+          // adjust currentIndex if needed
+          setCurrentIndex((prev) =>
+            prev >= previewImages.length - 1 ? 0 : prev
+          );
         }}
       />
 
       {previewImages.length > 1 && (
         <button
           onClick={() =>
-            setCurrentIndex((prev) => (prev === previewImages.length - 1 ? 0 : prev + 1))
+            setCurrentIndex((prev) =>
+              prev === previewImages.length - 1 ? 0 : prev + 1
+            )
           }
           className="absolute right-4 text-white text-3xl p-2 bg-black bg-opacity-40 rounded-full hover:bg-opacity-70"
         >
@@ -402,11 +419,9 @@ const getValidImages = (images) =>
       )}
     </div>
 
-    {previewImages.length > 1 && (
-      <p className="text-gray-300 mt-3 text-sm">
-        {currentIndex + 1} / {previewImages.length}
-      </p>
-    )}
+    <p className="text-gray-300 mt-3 text-sm">
+      {currentIndex + 1} / {previewImages.length}
+    </p>
   </div>
 )}
 
@@ -415,26 +430,34 @@ const getValidImages = (images) =>
                   <>
                     {selectedNotification.event_content ? (
                       <>
-                        <p className="text-gray-700 dark:text-gray-300">{selectedNotification.event_content}</p>
+                        <div
+                            className="mt-3 text-gray-800 leading-relaxed whitespace-pre-line"
+                            dangerouslySetInnerHTML={{
+                              __html: selectedNotification.event_content
+                                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // optional: bold text inside ** **
+                            }}
+                          />
                         {selectedNotification.event_location && (
                           <p className="text-sm text-blue-500 mt-1">
                             📍 {selectedNotification.event_location}
                           </p>
                         )}
-                        {selectedNotification.event_images &&
-                          selectedNotification.event_images.map((img, idx) => (
+                       {selectedNotification.event_images &&
+                        selectedNotification.event_images
+                          .filter((img) => img && img.startsWith("http"))
+                          .map((img, idx) => (
                             <img
                               key={idx}
                               src={img}
                               alt={`Event Image ${idx + 1}`}
                               onClick={() => {
-                                setPreviewImages(getValidImages(selectedNotification.post_images || selectedNotification.event_images || []));
                                 setModalImageSrc(img);
                                 setShowImageModal(true);
                               }}
                               className="mt-3 w-full max-h-[70vh] object-contain rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition"
                             />
                           ))}
+
                       </>
                     ) : (
                       <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
