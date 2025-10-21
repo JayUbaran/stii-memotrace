@@ -156,7 +156,10 @@ const ChatApp = () => {
   // Unsend message
   const handleUnsendMessage = async (id) => {
     try {
-      await fetch(`https://server-t48e.onrender.com/api/messages/${id}`, { method: "DELETE" });
+      await fetch(`https://server-t48e.onrender.com/api/messages/${id}`, { 
+        method: "DELETE",
+        credentials: "include"
+      });
       setMessages((prev) =>
         (Array.isArray(prev) ? prev : []).filter((m) => m.id !== id)
       );
@@ -180,7 +183,9 @@ const handleSelectUser = async (user) => {
   try {
     const res = await fetch(
       `https://server-t48e.onrender.com/api/messages/${currentUser.id}/${partnerId}/seen`,
-      { method: "PATCH" }
+      { method: "PATCH",
+        credentials: "include"
+       }
     );
     const data = await res.json();
     if (data.success) {

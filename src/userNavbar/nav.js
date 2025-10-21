@@ -444,7 +444,12 @@ const getValidImages = (images) =>
                         )}
                        {selectedNotification.event_images &&
                         selectedNotification.event_images
-                          .filter((img) => img && img.startsWith("http"))
+                          (selectedNotification.event_images
+                            ? Array.isArray(selectedNotification.event_images)
+                              ? selectedNotification.event_images
+                              : [selectedNotification.event_images]
+                            : []
+                          ).filter((img) => img && img.startsWith("http"))
                           .map((img, idx) => (
                             <img
                               key={idx}
