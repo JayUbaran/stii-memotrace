@@ -42,7 +42,7 @@ const ChatApp = () => {
   useEffect(() => {
     if (!currentUser?.id) return;
 
-    fetch("https://server-t48e.onrender.com/api/users")
+    fetch("https://server-t48e.onrender.com/api/chat")
       .then((res) => res.json())
       .then((data) =>
         setAllAlumni(data.filter((a) => a.id !== currentUser.id))
