@@ -64,7 +64,7 @@ const MemoryMapLanding = () => {
 <NavLink/>
 
       {/* Content Section */}
-<div className=" text-green p-6 md:p-10 flex flex-wrap md:flex-nowrap absolute left-0 ml-10 animate-pop-up" style={{ animationDelay: "0.5s" }}>
+<div className=" text-green p-6 md:p-10 flex flex-wrap md:flex-nowrap absolute left-0 ml-5 animate-pop-up" style={{ animationDelay: "0.5s" }}>
   
 {/* Logo Behind the Text */}
 <div className="absolute inset-0 flex justify-center items-center">
@@ -96,80 +96,6 @@ const MemoryMapLanding = () => {
 </div>
 </div>
 
-      {/* Tailwind Animations */}
-      {/* <style>
-        {`
-          @keyframes popUp {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-          }
-          .animate-pop-up {
-            animation: popUp 0.6s ease-out forwards;
-          }
-            @keyframes moveBackground {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-          .animate-background {
-            animation: moveBackground 10s infinite linear alternate;
-          }
-          @keyframes gradientMove {
-            0% { transform: translateX(-50%); }
-            50% { transform: translateX(50%); }
-            100% { transform: translateX(-50%); }
-          }
-          .animate-gradient {
-            animation: gradientMove 6s infinite alternate;
-          }
-          @keyframes float {
-            0% { transform: translateY(0px); opacity: 0.6; }
-            50% { transform: translateY(-10px); opacity: 1; }
-            100% { transform: translateY(0px); opacity: 0.6; }
-          }
-          .animate-float {
-            animation: float 5s infinite ease-in-out;
-          }
-          @keyframes glow {
-            0% { text-shadow: 0 0 10px #3b82f6; }
-            50% { text-shadow: 0 0 20px #1e3a8a; }
-            100% { text-shadow: 0 0 10px #3b82f6; }
-          }
-          .animate-glow {
-            animation: glow 2s infinite alternate;
-          }
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-          .animate-fade-in {
-            animation: fadeIn 2s ease-in;
-          }
-          @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-          }
-          .animate-pulse {
-            animation: pulse 1.5s infinite;
-          }
-          @keyframes bounceSlow {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-          }
-          .animate-bounce-slow {
-            animation: bounceSlow 4s infinite;
-          }
-                @keyframes popUp {
-        0% { transform: translateY(20px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-      }
-      .animate-pop-up {
-        animation: popUp 0.6s ease-out forwards;
-      }
-  
-        `}
-      </style> */}
 
             {/* Bottom Navbar with Pop-Up Animation */}
             <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 py-4 animate-pop-up">
