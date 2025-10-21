@@ -19,7 +19,7 @@ export default function Users() {
       .catch((err) => console.error("Error fetching users:", err));
   }, []);
 
-  const handleUpload = async (e) => {
+  const handleUpload = (e) => {
     e.preventDefault();
 
     if (!alumniFile) {
@@ -34,72 +34,61 @@ export default function Users() {
     const formData = new FormData();
     formData.append("alumniFile", alumniFile);
 
-    try {
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", "https://server-t48e.onrender.com/upload-alumni-ids", true);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://server-t48e.onrender.com/upload-alumni-ids", true);
 
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          setUploadProgress(percent);
-        }
-      };
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        setUploadProgress(percent);
+      }
+    };
 
-      xhr.onload = () => {
-        let response;
-        try {
-          response = JSON.parse(xhr.responseText);
-        } catch {
-          Swal.fire({
-            icon: "error",
-            title: "Unexpected Error",
-            text: "Server returned invalid response. Check the file or server logs.",
-          });
-          setAlumniFile(null);
-          setUploadProgress(0);
-          return;
-        }
-
-        if (xhr.status === 200) {
-          setUploadProgress(100);
-          Swal.fire({
-            icon: "success",
-            title: "Upload Complete",
-            text: response.message || "Alumni ID file uploaded successfully!",
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Upload Failed",
-            text: response.message || "An error occurred while uploading.",
-          });
-        }
-
-        setAlumniFile(null);
-        setUploadProgress(0);
-      };
-
-      xhr.onerror = () => {
+    xhr.onload = () => {
+      let response;
+      try {
+        response = JSON.parse(xhr.responseText);
+      } catch {
         Swal.fire({
           icon: "error",
-          title: "Network Error",
-          text: "Check your internet connection and try again.",
+          title: "Unexpected Error",
+          text: "Server returned invalid response. Check the file or server logs.",
         });
         setAlumniFile(null);
         setUploadProgress(0);
-      };
+        return;
+      }
 
-      xhr.send(formData);
-    } catch (error) {
-      console.error("Error uploading Alumni IDs:", error);
+      if (xhr.status === 200) {
+        setUploadProgress(100);
+        Swal.fire({
+          icon: "success",
+          title: "Upload Complete",
+          text: response.message || "Alumni ID file uploaded successfully!",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Upload Failed",
+          text: response.message || "An error occurred while uploading.",
+        });
+      }
+
+      setAlumniFile(null);
+      setUploadProgress(0);
+    };
+
+    xhr.onerror = () => {
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "Something went wrong. Please try again later.",
+        title: "Network Error",
+        text: "Check your internet connection and try again.",
       });
       setAlumniFile(null);
       setUploadProgress(0);
-    }
+    };
+
+    xhr.send(formData);
   };
 
   return (
