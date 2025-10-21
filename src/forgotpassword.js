@@ -63,7 +63,7 @@ const [loading, setLoading] = useState(false);
     }
     setLoading(true);
     try {
-      const response = await fetch("https://server-t48e.onrender.com/api/users");
+      const response = await fetch("https://server-t48e.onrender.com/api/chat");
       const users = await response.json();
       const matchedUser = users.find(
         (u) => u.email?.toLowerCase() === formData.email.toLowerCase()
